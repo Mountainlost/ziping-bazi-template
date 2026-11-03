@@ -1,5 +1,7 @@
 # 子平八字 · Web 项目模板
 
+[![子平八字首页截图](docs/homepage.png)](https://mountainlost.github.io/ziping-bazi-template/)
+
 一个可自行部署的中文八字 Web 项目。输入出生资料后，程序计算真太阳时、四柱、大运与流年，生成十二章报告。报告提供白话、专业两种阅读方式及判断依据。子平大师提供可选的深度解读和互动问答。
 
 - [GitHub Pages 互动预览](https://mountainlost.github.io/ziping-bazi-template/)由原站前端直接构建。首页、排盘表单、子平大师和报告页沿用原布局，可打开一份虚构示例体验报告。
