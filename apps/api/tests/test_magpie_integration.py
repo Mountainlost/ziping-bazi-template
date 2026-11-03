@@ -116,12 +116,9 @@ def test_rederive_uses_whole_chart_facts_without_prior_report_prose(client):
         assert context['pillars'] == chart['pillars']
         assert context['readingMode'] == 'rederive'
         assert context['annualCycles'] and context['luckCycles']
-        assert sum(context['surfaceElements'].values()) == 8
-        assert any('子平真诠' in note['title'] for note in context['classicalNotes'])
         assert not {'input','calendar','reportSections','lifeThemes','report'} & context.keys()
         assert '私密测试称呼' not in request.content.decode()
-        answer = {'answer':'从你出生的季节看起。', 'professional':'以月令为纲，核对藏干与透干。',
-                  'evidenceIds':[context['classicalNotes'][0]['evidence'][0]['id']]}
+        answer = {'answer':'综合月令和透干，按整盘依据重新解读。', 'evidenceIds':[context['evidence'][0]['id']]}
         return httpx.Response(200,json={'output':[{'type':'message','content':[{'type':'output_text','text':json.dumps(answer)}]}]})
 
     client.app.state.ai_provider = MagpieProvider(
@@ -134,9 +131,6 @@ def test_rederive_uses_whole_chart_facts_without_prior_report_prose(client):
     result = client.post(path+'/ask',json=request)
     assert result.status_code == 200, result.text
     assert result.json()['presentation'] == 'rederive'
-    assert result.json()['professional'] == '以月令为纲，核对藏干与透干。'
-    assert '子平真诠' in result.json()['sources'][0]['title']
-    assert client.get(path+'/access').json()['history'][0]['professional'] == result.json()['professional']
     assert result.json()['remaining'] == 49
     assert client.get(path).json() == chart
 

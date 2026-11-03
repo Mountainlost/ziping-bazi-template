@@ -74,8 +74,6 @@
 .book-conveyor-figure figcaption a:hover { color:#2852eb; }
 .scan-home-content { max-width:1360px; padding:0 44px; margin:auto; }
 .home-birth-layout { display:grid; grid-template-columns:.8fr 1.2fr; gap:90px; border-top:1px solid #d4dce7; margin-top:42px; padding:75px 0 80px; align-items:start; scroll-margin-top:30px; }
-.paipan-page .home-birth-layout { border-top:0; margin-top:0; padding-top:60px; }
-.paipan-page .home-birth-intro h1 { font-size:clamp(36px,4.6vw,62px); line-height:1.1; letter-spacing:-.05em; margin:26px 0 18px; }
 .home-birth-intro h2 { font-size:35px; font-weight:600; letter-spacing:-.04em; margin:0 0 19px; }
 .home-birth-intro>p { font-size:18px; line-height:1.95; color:#60708a; margin:0; max-width:320px; }
 .home-birth-intro ol { list-style:none; padding:0; margin:37px 0 0; counter-reset:birth-steps; }

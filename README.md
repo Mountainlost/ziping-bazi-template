@@ -2,7 +2,7 @@
 
 一个可自行部署的中文八字 Web 项目。输入出生资料后，程序计算真太阳时、四柱、大运与流年，生成十二章报告。报告提供白话、专业两种阅读方式及判断依据。子平大师提供可选的深度解读和互动问答。
 
-- [GitHub Pages 互动预览](https://mountainlost.github.io/ziping-bazi-template/)使用虚构示例。可查看四柱、切换阅读版本和展开依据。
+- [GitHub Pages 互动预览](https://mountainlost.github.io/ziping-bazi-template/)由原站前端直接构建。首页、排盘表单、子平大师和报告页沿用原布局，可打开一份虚构示例体验报告。
 - 完整排盘、保存报告、发签和 AI 问答需要运行 Next.js 与 FastAPI。基础排盘与完整规则报告无需 API 密钥。
 - AI 启用后读取已确认的命盘。深度解读和问答单独保存，后端会校验锁定命盘在请求前后一致。
 
@@ -53,3 +53,11 @@ Windows PowerShell 下先设置 `$env:PYTHONUTF8="1"` 与 `$env:PYTHONIOENCODING
 - [发布文案](RELEASE.md)
 
 传统命理解读仅供参考。
+
+如需重建 Pages 预览，请在已安装后端依赖的环境运行：
+
+```sh
+python scripts/build_pages_preview.py pages-output --base-path /ziping-bazi-template
+```
+
+将输出目录发布到 GitHub Pages。部署到其他仓库时，将路径改为对应仓库名。

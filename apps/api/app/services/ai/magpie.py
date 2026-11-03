@@ -25,18 +25,12 @@ EXPLANATION_PROMPT='''
 
 
 REDERIVE_PROMPT='''
-你要根据已锁定的八字独立推导一份完整子平解读，同一解读交付白话版与专业版。四柱、旺衰、基础格局候选、扶抑、调候和运年由系统提供，保留它们的原有口径。可结合典籍另外分析，注明取法及适用条件，不把异说写成已确认结论。只用已给命盘事实与典籍，不补算神煞或分数，不写回原报告。
-两版按同样顺序，逐节用“## 标题”：
-五行与旺衰：先说日主、月令、明面五行数和关键根气，区分明面计数与藏干、旺衰。
-格局与喜忌：看月令藏干、透出和全局，说明扶抑与寒暖调候差别，典籍适用时注明盘里对应的字和缺少的条件。
-日主与四柱：从日主和年月日时中找本盘最鲜明的组合，再谈性格，不逐柱套话。
-财运与事业：分别交代财星从哪里来、官杀或食伤如何参与、对应什么工作才能或求财方式。禁止写项目规划、团队分工、管理流程或待人处事指南。
-感情与婚姻：先看日支，再看命盘中实际出现的配偶星线索。只有输入含传统男女分类时才可使用其取法。勿推定配偶特征、婚期和经历。
-大运与流年：按已计算的起止与切换，谈当下及后续关键变化。比较天干、地支分别给原局带来什么。不要倒推现实事件。
-总断：收束成最能区分这张盘的判断。后天取向如有充分依据可在喜忌节一并说明。省略无可靠规则支撑的亲属、子女、健康疾病与寿数断语。
-answer 是默认白话版，约 600 至 750 中文字。每节先给读者一句能听懂的判断，再用一条本盘特有的线索解释为什么。干支可以用于指明出生季节、关键组合和运年，术语分析集中在专业版。白话正文不要使用当令、根气、透干、泄身、克身、扶抑、调候、官杀、财耗、合化、自刑等行话，也不要用“某字即代表某星”把专业版逐句翻译。写到性格、工作、钱和关系时，讲这张盘在相应方面能看出什么特点、两面分别是什么。比如古书讲文章才能，可转成“你比较容易把杂乱的信息理成别人听得懂的话”，仅限条件确实匹配的盘。
-professional 是专业版，约 450 至 650 中文字，明确干支位置、十神关系、取法与成立条件。可以参照 classicalNotes，但仅引用输入里的典籍，标题和段落与白话版对应。月令所藏有不同天干时，分别检查透藏，说明与基础格局候选的关系。
-两版都要让结论能回指命盘中的实际事实，每节补充不同信息。避免重复“承载”“机会”“压力”等空话，不写泛用人生建议或反复提醒边界。只返回指定 JSON，evidenceIds 选两版最重要的给定证据。
+根据已确认的四柱独立推导一份子平白话解读。给定的排盘、旺衰、格局候选、扶抑、调候和运年是固定输入，不能重算、覆盖或补造。技术依据由页面另行展示。
+写给一个第一次看八字、想知道这份报告为什么说的是自己的人。全文约900至1200字。用第二人称和日常中文。开篇直接给出这张盘最有辨识度的一句话，再点出实际命盘中支撑它的两个具体事实。开篇可以出现干支，后文避免堆列藏干和十神，遇到必要术语立刻用一句白话说清。避免“克泄耗、承载、财杀、格局候选”之类的技术表述出现在正文里。
+可以用“性格”“事业”“财运”“感情”“这几年”作独立小标题。每一节必须增加上一节还没讲过的内容。性格可以讲平常和着急时有什么反差；事业给出两种具体工作场景，说明哪一种容易发挥；财运说明机会来自哪里、什么时候容易有机会却不划算；感情从日支看具体相处情景，例如有分歧时在意的是对方怎样回应，避免重复性格段的说法。只保留由本盘线索支撑的场景，不用团队管理、流程、交付、分工这类泛化建议撑篇幅。
+讲运年时先说这个阶段给原局带来了什么不同条件，同时留意干与支。若已给出天干的主题与地支支持方向，说明两者如何同时发生，不能只复述一个“压力”标签。挑最值得看懂的一次转变，讲清转变前后区别。起运为近似，通常写年份，确有交运分段再用月份区分。不要抄一串节气日期，也不要把尚未发生的事当成经历。
+不必强写每个主题，依据少的地方用一两句就够。姓名、性别和私人背景不在解读输入中，绝不能把这件事说成用户漏填、未知或要求补填。无需在每节重复“不能推定”等边界句，直接略过无依据的推断。不预测疾病、寿数、伴侣属性、地址或收入结果。不冒充真人。
+只输出指定JSON。answer是白话正文，小标题写为独立的“## 标题”行。evidenceIds选最能支撑正文的已给证据，不复制证据全文。不要写回原报告。
 '''
 
 
@@ -44,10 +38,6 @@ class Explanation(BaseModel):
     model_config=ConfigDict(extra='forbid')
     answer:str=Field(min_length=1,max_length=14000)
     evidenceIds:list[str]=Field(min_length=1,max_length=12)
-
-
-class ChartReading(Explanation):
-    professional: str = Field(min_length=1, max_length=14000)
 
 
 def needs_online(question):
@@ -82,8 +72,7 @@ class MagpieProvider:
 
     def explain(self,question,context,history=()):
         rederive=context.get('readingMode')=='rederive'
-        result_type = ChartReading if rederive else Explanation
-        schema = result_type.model_json_schema()
+        schema=Explanation.model_json_schema()
         schema['properties']['evidenceIds']['items']={'type':'string','enum':[ev['id'] for ev in context['evidence']]}
         inputs=[]
         for old in list(history)[-3:]:
@@ -107,7 +96,7 @@ class MagpieProvider:
         if not messages:
             raise ValueError('解读未返回有效文本')
         text=''.join(part.get('text','') for part in messages[-1].get('content',[]) if part.get('type')=='output_text')
-        result = result_type.model_validate_json(text)
+        result=Explanation.model_validate_json(text)
         web_calls=[item for item in output if item.get('type')=='web_search_call']
         if not rederive and needs_online(question) and not web_calls:
             raise ValueError('本次联网检索未实际完成，未展示未经查询的回答')

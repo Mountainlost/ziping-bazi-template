@@ -23,7 +23,7 @@ export function Verification({ chart }: { chart: Chart }) {
     </section>
     <section className="paper"><h2>节气边界</h2><div className="term-line"><div><small>前一节</small><h3>{chart.calendar.previousSolarTerm.name}</h3><p>{formatTime(chart.calendar.previousSolarTerm.time)}</p></div><span className="term-dot">出生</span><div><small>后一节</small><h3>{chart.calendar.nextSolarTerm.name}</h3><p>{formatTime(chart.calendar.nextSolarTerm.time)}</p></div></div><p className={chart.calendar.isNearBoundary ? 'boundary-warning' : 'field-hint'}>距离最近交节约 {chart.calendar.distanceFromBoundary.toFixed(2)} 小时。{chart.calendar.isNearBoundary ? '不足24小时，请特别核实出生记录；近临界时需外部历书复核。' : '未进入24小时边界提醒范围。'}</p></section>
     <Warnings chart={chart}/>{error && <p className="error" role="alert">{error}</p>}
-    <div className="actions"><button className="secondary" onClick={() => router.push('/paipan?edit=1#birth-form')}>修改出生资料</button>{chart.locked && <button className="secondary" disabled={loading} onClick={revalidate}>重新校验命盘</button>}<button className="primary" disabled={loading} onClick={confirm}>{loading ? '正在生成规则报告…' : chart.locked ? '查看已锁定报告 →' : '确认并开始分析 →'}</button></div>
+    <div className="actions"><button className="secondary" onClick={() => router.push('/?edit=1#birth-form')}>修改出生资料</button>{chart.locked && <button className="secondary" disabled={loading} onClick={revalidate}>重新校验命盘</button>}<button className="primary" disabled={loading} onClick={confirm}>{loading ? '正在生成规则报告…' : chart.locked ? '查看已锁定报告 →' : '确认并开始分析 →'}</button></div>
     {chart.locked && <EvidenceList items={chart.monthCommand.evidence}/>}
   </>;
 }

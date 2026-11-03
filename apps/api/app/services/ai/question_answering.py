@@ -1,9 +1,9 @@
 from copy import deepcopy
 import re
 from .provider import Selection
-from .magpie import ChartReading, Explanation
+from .magpie import Explanation
 from ...models import LockedChart
-from ..rules.common import ELEMENTS, element, evidence
+from ..rules.common import evidence
 from ..rules.strength import SEASON
 
 ROUTES = [
@@ -69,43 +69,11 @@ def with_evidence(context):
     return context
 
 
-def classical_notes(pillars):
-    """Select checked passages using facts already present in the locked chart."""
-    def note(title, url, summary):
-        return {'title': title, 'url': url, 'evidence': [evidence('典籍对照', title, 'neutral', summary)]}
-
-    notes = [note('《子平真诠》〈论用神〉、〈论用神变化〉',
-        'https://commons.wikimedia.org/wiki/File:NLC416-13jh002326-46443_淵海子平_子平真詮_第2卷.pdf',
-        '从月令入手，再看月令所藏、透出与四柱配合。古籍取格的“用神”与网站的扶抑取用各有定义；有财星透出与认定财格是两层判断。')]
-    day, month, hour = pillars['day'], pillars['month'], pillars.get('hour')
-    if day['stem'] == '辛' and month['branch'] == '亥':
-        notes.append(note('《穷通宝鉴》〈三冬辛金〉',
-            'https://zh.wikisource.org/zh-hant/窮通寶鑑#三冬辛金',
-            '十月辛金条以壬为先、丙为次，分别看透藏以及水多时有无戊土。丙与丁不可互代。此条用于寒暖配合对照，不能直接推出全局喜木火。'))
-    if (day['stem'] + day['branch'] == '辛亥' and hour and hour['stem'] + hour['branch'] == '甲午'
-            and all(pillars[key]['branch'] in '亥子' for key in ('year', 'month'))):
-        notes.append(note('《三命通会》卷九〈六辛日甲午时断〉',
-            'https://zh.wikisource.org/zh-hant/三命通會/卷九#六辛日甲午時斷',
-            '辛亥日、甲午时且年月见亥子时，原文强调金水之秀与文章才能。可作为表达、整理知识的传统线索，须和月令及全局互相印证。'))
-    return notes
-
-
 def rederive_context(chart):
     """Use computed structure and timing, leaving the original prose out of the request."""
     fields = ('pillars', 'dayMaster', 'monthCommand', 'strength', 'pattern', 'usefulGod', 'relations')
     context = {key: deepcopy(chart[key]) for key in fields if key in chart}
     context['readingMode'] = 'rederive'
-    pillars = context['pillars']
-    counts = dict.fromkeys(ELEMENTS, 0)
-    for pillar in pillars.values():
-        if pillar:
-            counts[element(pillar['stem'])] += 1
-            counts[SEASON[pillar['branch']]] += 1
-    context['surfaceElements'] = counts
-    context['classicalNotes'] = classical_notes(pillars)
-    # Transmit only the classification used for the traditional spouse-star convention.
-    if chart.get('input', {}).get('sex') in ('男', '女'):
-        context['traditionalSex'] = chart['input']['sex']
     context['luckTimeline'] = [
         {key: cycle[key] for key in ('stem', 'branch', 'startDate', 'endDateExclusive') if key in cycle}
         for cycle in chart['luckCycles']
@@ -148,17 +116,13 @@ def answer_question(snapshot: LockedChart, question, provider, history=(), *, mo
     allowed = {e['id']:deepcopy(e) for e in context['evidence']}
     if hasattr(provider,'explain'):
         raw=provider.explain(question,deepcopy(context),history=() if rederive else history)
-        response_type = ChartReading if rederive else Explanation
-        if set(raw) - set(response_type.model_fields) - {'sources', 'onlineUsed'}:
+        if set(raw)-{'answer','evidenceIds','sources','onlineUsed'}:
             raise ValueError('解读包含不允许的命盘字段')
-        result = response_type.model_validate({key: raw[key] for key in response_type.model_fields if key in raw})
+        result=Explanation.model_validate({k:raw[k] for k in ('answer','evidenceIds')})
         if any(i not in allowed for i in result.evidenceIds):
             raise ValueError('AI引用了未提供的证据，已拒绝展示')
-        references = ({'professional': result.professional,
-                       'sources': [{key: note[key] for key in ('title', 'url')} for note in context['classicalNotes']]}
-                      if isinstance(result, ChartReading) else {'sources': raw.get('sources', [])})
         return {'answer':result.answer,'evidence':[allowed[i] for i in dict.fromkeys(result.evidenceIds)],
-                **references,'onlineUsed':bool(raw.get('onlineUsed')),
+                'sources':raw.get('sources',[]),'onlineUsed':bool(raw.get('onlineUsed')),
                 'chartId':snapshot.id,'readOnly':True,'presentation':'rederive' if rederive else 'explain'}
     result = Selection.model_validate(provider.select(question,deepcopy(context)))
     if any(i not in allowed for i in result.evidenceIds):

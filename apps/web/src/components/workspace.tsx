@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useSession } from './session';
-import { BirthPageContent, HomeContent } from './home';
+import { HomeContent } from './home';
 import { ReportReader, ReadingModeSwitch } from './report-reader';
 import { Verification } from './verify';
 import { Analysis } from './analysis';
@@ -14,7 +14,7 @@ import { SiteHeader } from './site-header';
 const navIcons=[CalendarDots,ShieldCheck,BookOpenText,Compass,ChartLineUp,ChatCircleText];
 
 const navigation = [
-  {stage:'paipan',path:'/paipan',name:'出生资料',note:'输入生辰与地点'},
+  {stage:'birth',path:'/',name:'出生资料',note:'输入生辰与地点'},
   {stage:'verify',path:'/verify',name:'排盘校验',note:'校准时间与历法'},
   {stage:'overview',path:'/overview',name:'解读报告',note:'白话与专业解读'},
   {stage:'analysis',path:'/analysis',name:'旺衰与取用',note:'结论背后的依据'},
@@ -31,17 +31,17 @@ const headings: Record<string,[string,string]> = {
 
 export function Workspace({ stage }: { stage: string }) {
   const { chart, ready, error } = useSession();
-  const isBirth = stage === 'birth' || stage === 'paipan';
+  const isBirth = stage === 'birth';
   const current = navigation.findIndex(n => n.stage === stage);
   return <div className={`app-shell modern-app ${isBirth ? 'home-app scan-home-app' : 'report-app'}`} data-motion="on">
     <SiteHeader section={isBirth?'home':'report'} stage={stage}/>
     <div className="main-area">
       {!isBirth && <div className="workspace-bar"><nav aria-label="命盘导航">{navigation.map((n,i)=>{const Icon=navIcons[i];return <Link href={n.path} key={n.stage} aria-current={stage===n.stage?'page':undefined}><Icon size={20} weight="duotone" aria-hidden="true"/>{n.name}</Link>;})}</nav></div>}
       <main id="main-content" className={isBirth?'home-main':stage==='overview'?'reader-main':'workspace-main'}>
-        {!ready ? <div className="empty-state" role="status">正在读取命盘…</div> : isBirth ? (stage === 'paipan' ? <BirthPageContent/> : <HomeContent/>) : <>
+        {!ready ? <div className="empty-state" role="status">正在读取命盘…</div> : isBirth ? <HomeContent/> : <>
           {stage!=='overview' && <div className="workspace-heading"><PageHeading number={String(current+1).padStart(2,'0')} title={headings[stage]?.[0] || '命盘'} description={headings[stage]?.[1] || ''}/>{stage==='analysis'&&<ReadingModeSwitch/>}</div>}
           {error && <p role="alert" className="error">{error}</p>}
-          {!chart || (stage !== 'verify' && !chart.locked) ? <div className="empty-state"><span className="eyebrow">尚未生成报告</span><h2>{chart ? '请先确认当前排盘' : '从出生资料开始'}</h2><p>{chart ? '核对时间和四柱，确认后才能读取完整报告。' : '没有示例命盘代替你的资料。填写生辰后，系统会进行确定性计算。'}</p><Link className="primary" href={chart ? '/verify' : '/paipan'}>{chart ? '核对排盘 →' : '填写出生资料 →'}</Link></div> : <>
+          {!chart || (stage !== 'verify' && !chart.locked) ? <div className="empty-state"><span className="eyebrow">尚未生成报告</span><h2>{chart ? '请先确认当前排盘' : '从出生资料开始'}</h2><p>{chart ? '核对时间和四柱，确认后才能读取完整报告。' : '没有示例命盘代替你的资料。填写生辰后，系统会进行确定性计算。'}</p><Link className="primary" href={chart ? '/verify' : '/'}>{chart ? '核对排盘 →' : '填写出生资料 →'}</Link></div> : <>
             {stage === 'verify' && <Verification key={chart.id} chart={chart}/>}
             {stage === 'overview' && <ReportReader chart={chart}/>}
             {stage === 'analysis' && <Analysis chart={chart}/>}

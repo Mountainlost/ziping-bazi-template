@@ -20,3 +20,4 @@ private-env.json
 *.p12
 id_ed25519*
 id_rsa*
+pages-output/

@@ -1,6 +1,6 @@
 # 服务器部署
 
-应用需要一个运行 Next.js 和 FastAPI 的环境。GitHub Pages 只发布 `docs/` 下的静态演示。
+应用需要一个运行 Next.js 和 FastAPI 的环境。GitHub Pages 发布由原站前端导出的静态预览，构建方式见 README。
 
 1. 按 README 安装依赖并跑通本地站点。将 SQLite 数据和日志放在源码以外的持久目录。
 2. Windows 生产部署可运行 `deploy/prepare-server.ps1`，生成 Next.js standalone 构建。复制 `deploy/server.example.json` 为仓库外的配置，填写自己的路径、端口与站点地址。

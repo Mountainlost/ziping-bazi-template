@@ -16,7 +16,7 @@ export function ReportAccess() {
   function startChart(event: React.MouseEvent<HTMLAnchorElement>) {
     dialog.current?.close();
     const form = document.getElementById('birth-form');
-    if (window.location.pathname === '/paipan' && !window.location.search && form) {
+    if (window.location.pathname === '/' && !window.location.search && form) {
       event.preventDefault();
       window.location.hash = 'birth-form';
       form.scrollIntoView();
@@ -29,5 +29,5 @@ export function ReportAccess() {
     finally{setBusy(false);}
   }
   if (chart?.locked) return <Link className="header-report-access" href="/overview">阅读我的报告 <ArrowUpRight size={21} aria-hidden="true"/></Link>;
-  return <><button className="header-report-access" type="button" aria-haspopup="dialog" onClick={() => dialog.current?.showModal()}>凭签查看报告 <ArrowUpRight size={21} aria-hidden="true"/></button><dialog ref={dialog} className="report-access-dialog" aria-labelledby="report-access-title" onClick={event => { if (event.target === event.currentTarget) dialog.current?.close(); }}><button className="report-access-close" aria-label="关闭" type="button" onClick={() => dialog.current?.close()}><X size={23} aria-hidden="true"/></button><h2 id="report-access-title">找回你的解盘报告</h2><p>输入已绑定报告的签子，即可继续阅读原来的报告。</p><form className="master-pass-form" onSubmit={lookup}><label htmlFor="report-pass">完整签子</label><input id="report-pass" type="password" autoComplete="off" value={code} onChange={e=>setCode(e.target.value)} minLength={12} maxLength={120} required/>{error&&<p role="alert" className="master-chat-error">{error}</p>}<button className="scan-primary" type="submit" disabled={busy}>{busy?'正在读取…':'查看原报告'}<ArrowUpRight size={21} aria-hidden="true"/></button></form><Link href="/paipan" className="scan-text-link" onClick={startChart}>第一次来？先开始排盘</Link></dialog></>;
+  return <><button className="header-report-access" type="button" aria-haspopup="dialog" onClick={() => dialog.current?.showModal()}>凭签查看报告 <ArrowUpRight size={21} aria-hidden="true"/></button><dialog ref={dialog} className="report-access-dialog" aria-labelledby="report-access-title" onClick={event => { if (event.target === event.currentTarget) dialog.current?.close(); }}><button className="report-access-close" aria-label="关闭" type="button" onClick={() => dialog.current?.close()}><X size={23} aria-hidden="true"/></button><h2 id="report-access-title">找回你的解盘报告</h2><p>输入已绑定报告的签子，即可继续阅读原来的报告。</p><form className="master-pass-form" onSubmit={lookup}><label htmlFor="report-pass">完整签子</label><input id="report-pass" type="password" autoComplete="off" value={code} onChange={e=>setCode(e.target.value)} minLength={12} maxLength={120} required/>{error&&<p role="alert" className="master-chat-error">{error}</p>}<button className="scan-primary" type="submit" disabled={busy}>{busy?'正在读取…':'查看原报告'}<ArrowUpRight size={21} aria-hidden="true"/></button></form><Link href="/#birth-form" className="scan-text-link" onClick={startChart}>第一次来？先开始排盘</Link></dialog></>;
 }
