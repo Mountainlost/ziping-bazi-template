@@ -1,0 +1,13 @@
+{
+  "projectRoot": "C:\\Apps\\Ziping\\code",
+  "pythonExecutable": "C:\\Apps\\Ziping\\venv\\Scripts\\python.exe",
+  "nodeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+  "dataDirectory": "C:\\ProgramData\\Ziping\\data",
+  "logDirectory": "C:\\ProgramData\\Ziping\\logs",
+  "apiHost": "127.0.0.1",
+  "apiPort": 18885,
+  "webHost": "127.0.0.1",
+  "webPort": 18886,
+  "publicOrigin": "https://ziping.example.com",
+  "magpieConfigFile": "C:\\ProgramData\\Ziping\\private-env.json"
+}
